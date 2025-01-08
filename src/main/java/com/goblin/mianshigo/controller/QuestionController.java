@@ -10,10 +10,7 @@ import com.goblin.mianshigo.common.ResultUtils;
 import com.goblin.mianshigo.constant.UserConstant;
 import com.goblin.mianshigo.exception.BusinessException;
 import com.goblin.mianshigo.exception.ThrowUtils;
-import com.goblin.mianshigo.model.dto.question.QuestionAddRequest;
-import com.goblin.mianshigo.model.dto.question.QuestionEditRequest;
-import com.goblin.mianshigo.model.dto.question.QuestionQueryRequest;
-import com.goblin.mianshigo.model.dto.question.QuestionUpdateRequest;
+import com.goblin.mianshigo.model.dto.question.*;
 import com.goblin.mianshigo.model.entity.Question;
 import com.goblin.mianshigo.model.entity.User;
 import com.goblin.mianshigo.model.vo.QuestionVO;
@@ -245,6 +242,15 @@ public class QuestionController {
         ThrowUtils.throwIf(size > 200, ErrorCode.PARAMS_ERROR);
         Page<Question> questionPage = questionService.searchFromEs(questionQueryRequest);
         return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
+    }
+
+    @PostMapping("/delete/batch")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> batchDeleteQuestions(@RequestBody QuestionBatchDeleteRequest questionBatchDeleteRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(questionBatchDeleteRequest == null , ErrorCode.PARAMS_ERROR);
+        List<Long> questionIdList = questionBatchDeleteRequest.getQuestionIdList();
+        questionService.batchDeleteQuestions(questionIdList);
+        return ResultUtils.success(true);
     }
 
 }

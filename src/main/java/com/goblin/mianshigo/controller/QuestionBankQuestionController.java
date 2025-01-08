@@ -1,5 +1,6 @@
 package com.goblin.mianshigo.controller;
 
+import co.elastic.clients.elasticsearch.xpack.usage.Base;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,21 +12,20 @@ import com.goblin.mianshigo.common.ResultUtils;
 import com.goblin.mianshigo.constant.UserConstant;
 import com.goblin.mianshigo.exception.BusinessException;
 import com.goblin.mianshigo.exception.ThrowUtils;
-import com.goblin.mianshigo.model.dto.questionBankQuestion.QuestionBankQuestionAddRequest;
-import com.goblin.mianshigo.model.dto.questionBankQuestion.QuestionBankQuestionQueryRequest;
-import com.goblin.mianshigo.model.dto.questionBankQuestion.QuestionBankQuestionRemoveRequest;
-import com.goblin.mianshigo.model.dto.questionBankQuestion.QuestionBankQuestionUpdateRequest;
+import com.goblin.mianshigo.model.dto.questionBankQuestion.*;
 import com.goblin.mianshigo.model.entity.QuestionBankQuestion;
 import com.goblin.mianshigo.model.entity.User;
 import com.goblin.mianshigo.model.vo.QuestionBankQuestionVO;
 import com.goblin.mianshigo.service.QuestionBankQuestionService;
 import com.goblin.mianshigo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @RestController
@@ -225,5 +225,26 @@ public class QuestionBankQuestionController {
                 .eq(QuestionBankQuestion::getQuestionId, questionId);
         boolean result = questionBankQuestionService.remove(lambdaQueryWrapper);
         return ResultUtils.success(result);
+    }
+
+    @PostMapping("/add/batch")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> batchAddQuestionsToBank(@RequestBody QuestionBankQuestionBatchAddRequest questionBankQuestionBatchAddRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(questionBankQuestionBatchAddRequest == null, ErrorCode.PARAMS_ERROR);
+        User loginUser = userService.getLoginUser(request);
+        Long questionBankId = questionBankQuestionBatchAddRequest.getQuestionBankId();
+        List<Long> questionIdList = questionBankQuestionBatchAddRequest.getQuestionIdList();
+        questionBankQuestionService.batchAddQuestionsToBank(questionIdList, questionBankId, loginUser);
+        return ResultUtils.success(true);
+    }
+
+    @PostMapping("/remove/batch")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> batchRemoveQuestionsFromBank(@RequestBody QuestionBankQuestionBatchRemoveRequest questionBankQuestionBatchRemoveRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(questionBankQuestionBatchRemoveRequest == null, ErrorCode.PARAMS_ERROR);
+        Long questionBankId = questionBankQuestionBatchRemoveRequest.getQuestionBankId();
+        List<Long> questionIdList = questionBankQuestionBatchRemoveRequest.getQuestionIdList();
+        questionBankQuestionService.batchRemoveQuestionsFromBank(questionIdList, questionBankId);
+        return ResultUtils.success(true);
     }
 }

@@ -1,11 +1,14 @@
 package com.goblin.mianshigo.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.goblin.mianshigo.common.ErrorCode;
 import com.goblin.mianshigo.constant.CommonConstant;
+import com.goblin.mianshigo.exception.BusinessException;
 import com.goblin.mianshigo.exception.ThrowUtils;
 import com.goblin.mianshigo.mapper.QuestionBankQuestionMapper;
 import com.goblin.mianshigo.model.dto.questionBankQuestion.QuestionBankQuestionQueryRequest;
@@ -24,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -33,10 +37,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
-* @author MSIBomber
-* @description 针对表【question_bank_question(题库题目)】的数据库操作Service实现
-* @createDate 2024-12-23 17:37:38
-*/
+ * @author MSIBomber
+ * @description 针对表【question_bank_question(题库题目)】的数据库操作Service实现
+ * @createDate 2024-12-23 17:37:38
+ */
 @Service
 @Slf4j
 public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQuestionMapper, QuestionBankQuestion> implements QuestionBankQuestionService {
@@ -55,7 +59,7 @@ public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQue
      * 校验数据
      *
      * @param questionBankQuestion
-     * @param add      对创建的数据进行校验
+     * @param add                  对创建的数据进行校验
      */
     @Override
     public void validQuestionBankQuestion(QuestionBankQuestion questionBankQuestion, boolean add) {
@@ -188,6 +192,49 @@ public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQue
         return questionBankQuestionVOPage;
     }
 
+    @Transactional(rollbackFor = Exception.class) // 任何错误都会被回滚
+    public void batchAddQuestionsToBank(List<Long> questionIdList, Long questionBankId, User loginUser) {
+        // 参数校验
+        ThrowUtils.throwIf(CollUtil.isEmpty(questionIdList), ErrorCode.PARAMS_ERROR, "题目列表为空");
+        ThrowUtils.throwIf(questionBankId == null || questionBankId < 0, ErrorCode.PARAMS_ERROR, "题库非法");
+        ThrowUtils.throwIf(loginUser == null, ErrorCode.NOT_LOGIN_ERROR);
+        // 检查题目是否存在
+        List<Question> questionList = questionService.listByIds(questionIdList);
+        List<Long> validQuestionIdList = questionList.stream().map(Question::getId).collect(Collectors.toList());
+        ThrowUtils.throwIf(CollUtil.isEmpty(validQuestionIdList), ErrorCode.NOT_FOUND_ERROR, "题目不存在");
+        // 检查题库是否存在
+        QuestionBank questionBank = questionBankService.getById(questionBankId);
+        ThrowUtils.throwIf(questionBank == null, ErrorCode.NOT_FOUND_ERROR, "题库不存在");
+        // 执行添加
+        for (Long questionId : questionIdList) {
+            QuestionBankQuestion questionbankquestion = new QuestionBankQuestion();
+            questionbankquestion.setQuestionId(questionId);
+            questionbankquestion.setQuestionBankId(questionBankId);
+            questionbankquestion.setUserId(loginUser.getId());
+            boolean result = this.save(questionbankquestion);
+            if (!result) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "向题库添加题目失败");
+            }
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class) // 任何错误都会被回滚
+    public void batchRemoveQuestionsFromBank(List<Long> questionIdList, Long questionBankId) {
+        // 参数校验
+        ThrowUtils.throwIf(CollUtil.isEmpty(questionIdList), ErrorCode.PARAMS_ERROR, "题目列表为空");
+        ThrowUtils.throwIf(questionBankId == null || questionBankId <= 0, ErrorCode.PARAMS_ERROR, "题库非法");
+        // 执行删除关联
+        for (Long questionId : questionIdList) {
+            // 构造查询
+            LambdaQueryWrapper<QuestionBankQuestion> lambdaQueryWrapper = Wrappers.lambdaQuery(QuestionBankQuestion.class)
+                    .eq(QuestionBankQuestion::getQuestionId, questionId)
+                    .eq(QuestionBankQuestion::getQuestionBankId, questionBankId);
+            boolean result = this.remove(lambdaQueryWrapper);
+            if (!result) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "从题库移除题目失败");
+            }
+        }
+    }
 }
 
 
