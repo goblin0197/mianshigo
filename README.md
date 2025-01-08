@@ -172,7 +172,7 @@ PUT post_v1
 
 ```
 // 指定生成参数
-String packageName = "com.goblin.springbootinit";
+String packageName = "com.goblin.mianshigo";
 String dataName = "用户评论";
 String dataKey = "userComment";
 String upperDataKey = "UserComment";

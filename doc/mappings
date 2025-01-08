@@ -1,0 +1,55 @@
+analyzer: ik_max_word：用于索引时进行最大粒度的分词，生成较多词语，适合在查询时提高召回率。
+search_analyzer: ik_smart：用于搜索时进行较智能的分词，生成较少的词语，通常用于提高搜索精度。
+
+PUT /question_v1
+{
+  "aliases": { // 索引别名，查询时使用别名进行查询。一个别名可以指向多个索引
+    "question": {}
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "content": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "answer": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "userId": {
+        "type": "long"
+      },
+      "editTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "createTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "updateTime": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
+      "isDelete": {
+        "type": "keyword"
+      }
+    }
+  }
+}
