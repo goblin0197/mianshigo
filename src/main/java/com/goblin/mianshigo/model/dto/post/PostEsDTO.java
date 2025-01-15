@@ -1,6 +1,7 @@
 package com.goblin.mianshigo.model.dto.post;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.goblin.mianshigo.model.entity.Post;
 import lombok.Data;
@@ -94,8 +95,8 @@ public class PostEsDTO implements Serializable {
         PostEsDTO postEsDTO = new PostEsDTO();
         BeanUtils.copyProperties(post, postEsDTO);
         String tagsStr = post.getTags();
-        if (StringUtils.isNotBlank(tagsStr)) {
-            postEsDTO.setTags(JSONUtil.toList(tagsStr, String.class));
+        if (StrUtil.isNotBlank(tagsStr)) {
+            postEsDTO.setTags(JSONUtil.toList(JSONUtil.parseArray(tagsStr), String.class));
         }
         return postEsDTO;
     }

@@ -3,10 +3,12 @@ package com.goblin.mianshigo.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.goblin.mianshigo.common.BatchAddResult;
 import com.goblin.mianshigo.model.dto.questionBankQuestion.QuestionBankQuestionQueryRequest;
 import com.goblin.mianshigo.model.entity.QuestionBankQuestion;
 import com.goblin.mianshigo.model.entity.User;
 import com.goblin.mianshigo.model.vo.QuestionBankQuestionVO;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -58,7 +60,10 @@ public interface QuestionBankQuestionService extends IService<QuestionBankQuesti
      * @param questionBankId
      * @param loginUser
      */
-    void batchAddQuestionsToBank(List<Long> questionIdList, Long questionBankId, User loginUser);
+    BatchAddResult batchAddQuestionsToBank(List<Long> questionIdList, Long questionBankId, User loginUser);
+
+
+    void batchAddQuestionsToBankInner(List<QuestionBankQuestion> questionBankQuestions);
 
     /**
      * 批量删除题库中的题目

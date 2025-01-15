@@ -1,6 +1,7 @@
 package com.goblin.mianshigo.model.dto.question;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.goblin.mianshigo.model.entity.Question;
 import lombok.Data;
@@ -84,8 +85,8 @@ public class QuestionEsDTO implements Serializable {
         QuestionEsDTO questionEsDTO = new QuestionEsDTO();
         BeanUtils.copyProperties(question, questionEsDTO);
         String tagsStr = question.getTags();
-        if (StringUtils.isNotBlank(tagsStr)) {
-            questionEsDTO.setTags(JSONUtil.toList(tagsStr, String.class));
+        if (StrUtil.isNotBlank(tagsStr)) {
+            questionEsDTO.setTags(JSONUtil.toList(JSONUtil.parseArray(tagsStr), String.class));
         }
         return questionEsDTO;
     }

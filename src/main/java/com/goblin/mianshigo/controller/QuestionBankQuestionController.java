@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.goblin.mianshigo.annotation.AuthCheck;
-import com.goblin.mianshigo.common.BaseResponse;
-import com.goblin.mianshigo.common.DeleteRequest;
-import com.goblin.mianshigo.common.ErrorCode;
-import com.goblin.mianshigo.common.ResultUtils;
+import com.goblin.mianshigo.common.*;
 import com.goblin.mianshigo.constant.UserConstant;
 import com.goblin.mianshigo.exception.BusinessException;
 import com.goblin.mianshigo.exception.ThrowUtils;
@@ -229,13 +226,13 @@ public class QuestionBankQuestionController {
 
     @PostMapping("/add/batch")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-    public BaseResponse<Boolean> batchAddQuestionsToBank(@RequestBody QuestionBankQuestionBatchAddRequest questionBankQuestionBatchAddRequest, HttpServletRequest request) {
+    public BaseResponse<BatchAddResult> batchAddQuestionsToBank(@RequestBody QuestionBankQuestionBatchAddRequest questionBankQuestionBatchAddRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(questionBankQuestionBatchAddRequest == null, ErrorCode.PARAMS_ERROR);
         User loginUser = userService.getLoginUser(request);
         Long questionBankId = questionBankQuestionBatchAddRequest.getQuestionBankId();
         List<Long> questionIdList = questionBankQuestionBatchAddRequest.getQuestionIdList();
-        questionBankQuestionService.batchAddQuestionsToBank(questionIdList, questionBankId, loginUser);
-        return ResultUtils.success(true);
+        BatchAddResult batchAddResult = questionBankQuestionService.batchAddQuestionsToBank(questionIdList, questionBankId, loginUser);
+        return ResultUtils.success(batchAddResult);
     }
 
     @PostMapping("/remove/batch")

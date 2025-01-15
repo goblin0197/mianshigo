@@ -1,6 +1,7 @@
 package com.goblin.mianshigo.controller;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.goblin.mianshigo.common.BaseResponse;
 import com.goblin.mianshigo.common.ErrorCode;
 import com.goblin.mianshigo.common.ResultUtils;
@@ -93,7 +94,8 @@ public class FileController {
         // 文件大小
         long fileSize = multipartFile.getSize();
         // 文件后缀
-        String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
+        String fileSuffix = FileUtil.extName(multipartFile.getOriginalFilename());
+//        String fileSuffix = FileUtil.getSuffix(multipartFile.getOriginalFilename());
         final long ONE_M = 1024 * 1024L;
         if (FileUploadBizEnum.USER_AVATAR.equals(fileUploadBizEnum)) {
             if (fileSize > ONE_M) {

@@ -1,5 +1,6 @@
 package com.goblin.mianshigo.model.vo;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.goblin.mianshigo.model.entity.Question;
 import lombok.Data;
@@ -86,7 +87,9 @@ public class QuestionVO implements Serializable {
         }
         QuestionVO questionVO = new QuestionVO();
         BeanUtils.copyProperties(question, questionVO);
-        questionVO.setTagList(JSONUtil.toList(question.getTags(), String.class));
+        if (StrUtil.isNotBlank(question.getTags())) {
+            questionVO.setTagList(JSONUtil.toList(JSONUtil.parseArray(question.getTags()), String.class));
+        }
         return questionVO;
     }
 }

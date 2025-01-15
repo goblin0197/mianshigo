@@ -3,6 +3,7 @@ package com.goblin.mianshigo.controller;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.goblin.mianshigo.annotation.AuthCheck;
+import com.goblin.mianshigo.annotation.HotKey;
 import com.goblin.mianshigo.common.BaseResponse;
 import com.goblin.mianshigo.common.DeleteRequest;
 import com.goblin.mianshigo.common.ErrorCode;
@@ -126,6 +127,7 @@ public class QuestionController {
      * @return
      */
     @GetMapping("/get/vo")
+    @HotKey(prefix = true ,key = "question_detail_")
     public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         // 查询数据库

@@ -2,6 +2,7 @@ package com.goblin.mianshigo.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.goblin.mianshigo.annotation.AuthCheck;
+import com.goblin.mianshigo.annotation.HotKey;
 import com.goblin.mianshigo.common.BaseResponse;
 import com.goblin.mianshigo.common.DeleteRequest;
 import com.goblin.mianshigo.common.ErrorCode;
@@ -137,6 +138,7 @@ public class QuestionBankController {
      * @return
      */
     @GetMapping("/get/vo")
+    @HotKey(prefix = true , key = "bank_detail_")
     public BaseResponse<QuestionBankVO> getQuestionBankVOById(QuestionBankQueryRequest questionBankQueryRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(questionBankQueryRequest == null, ErrorCode.PARAMS_ERROR);
         Long id = questionBankQueryRequest.getId();
