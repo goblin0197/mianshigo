@@ -1,6 +1,13 @@
 package com.goblin.mianshigo.controller;
 
 import cn.hutool.json.JSONUtil;
+import com.alibaba.csp.sentinel.Entry;
+import com.alibaba.csp.sentinel.EntryType;
+import com.alibaba.csp.sentinel.SphU;
+import com.alibaba.csp.sentinel.Tracer;
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.csp.sentinel.slots.block.degrade.DegradeException;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.goblin.mianshigo.annotation.AuthCheck;
 import com.goblin.mianshigo.annotation.HotKey;
@@ -254,5 +261,45 @@ public class QuestionController {
         questionService.batchDeleteQuestions(questionIdList);
         return ResultUtils.success(true);
     }
+    @PostMapping("/test")
+    @SentinelResource("haha")
+    public BaseResponse<Page<QuestionVO>> haha(QuestionQueryRequest questionQueryRequest , HttpServletRequest request){
+        // 基于 IP 限流
+        String remoteAddr = request.getRemoteAddr();
+        Entry entry = null;
+        try  {
+            entry = SphU.entry("listQuestionVOByPage", EntryType.IN, 1, remoteAddr);
+            // 被保护的业务逻辑
+            // 查询数据库
+            Page<Question> questionPage = questionService.listQuestionByPage(questionQueryRequest);
+            // 获取封装类
+            return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
+        } catch (Throwable ex) {
+            // 业务异常
+            if (!BlockException.isBlockException(ex)) {
+                // 不使用注解时，需要手动上报异常
+                Tracer.trace(ex);
+                return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "系统错误");
+            }
+            // 资源访问阻止，被限流或被降级
+            if (ex instanceof DegradeException) {
+                return handleFallback(questionQueryRequest, request, ex);
+            }
+            // 限流操作
+            return ResultUtils.error(ErrorCode.SYSTEM_ERROR, "访问过于频繁，请稍后再试");
+        } finally {
+            if (entry != null) {
+                entry.exit(1, remoteAddr);
+            }
+        }
+    }
 
+    /**
+     * listQuestionVOByPage 降级操作：直接返回本地数据
+     */
+    public BaseResponse<Page<QuestionVO>> handleFallback(QuestionQueryRequest questionQueryRequest,
+                                                         HttpServletRequest request, Throwable ex) {
+        // 可以返回本地数据或空数据
+        return ResultUtils.success(null);
+    }
 }
