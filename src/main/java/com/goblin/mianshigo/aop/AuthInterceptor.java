@@ -8,8 +8,6 @@ import com.goblin.mianshigo.model.enums.UserRoleEnum;
 import com.goblin.mianshigo.service.UserService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -21,8 +19,8 @@ import javax.servlet.http.HttpServletRequest;
  * 权限校验 AOP
  *
  */
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class AuthInterceptor {
 
     @Resource
