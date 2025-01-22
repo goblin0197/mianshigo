@@ -2,6 +2,7 @@ package com.goblin.mianshigo.controller;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.goblin.mianshigo.annotation.CrawlerDetect;
 import com.goblin.mianshigo.common.BaseResponse;
 import com.goblin.mianshigo.common.DeleteRequest;
 import com.goblin.mianshigo.common.ErrorCode;
@@ -247,6 +248,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/list/page")
+    @CrawlerDetect // 爬虫检测
     @SaCheckRole(UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
             HttpServletRequest request) {
@@ -265,6 +267,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/list/page/vo")
+    @CrawlerDetect // 爬虫检测
     public BaseResponse<Page<UserVO>> listUserVOByPage(@RequestBody UserQueryRequest userQueryRequest,
             HttpServletRequest request) {
         if (userQueryRequest == null) {

@@ -1,5 +1,6 @@
 package com.goblin.mianshigo.exception;
 
+import cn.dev33.satoken.exception.DisableServiceException;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotRoleException;
 import com.goblin.mianshigo.common.BaseResponse;
@@ -39,6 +40,12 @@ public class GlobalExceptionHandler {
     public BaseResponse<?> notLoginExceptionHandler(RuntimeException e) {
         log.error("NotLoginException", e);
         return ResultUtils.error(ErrorCode.NOT_LOGIN_ERROR, "未登录");
+    }
+
+    @ExceptionHandler(DisableServiceException.class)
+    public BaseResponse<?> disableServiceExceptionHandler(RuntimeException e) {
+        log.error("DisableServiceException", e);
+        return ResultUtils.error(ErrorCode.LOGIN_BAN, "账号已被封禁");
     }
 
 }

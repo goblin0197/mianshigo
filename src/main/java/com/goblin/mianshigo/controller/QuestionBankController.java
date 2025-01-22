@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.goblin.mianshigo.annotation.CrawlerDetect;
 import com.goblin.mianshigo.annotation.HotKey;
 import com.goblin.mianshigo.common.BaseResponse;
 import com.goblin.mianshigo.common.DeleteRequest;
@@ -140,6 +141,7 @@ public class QuestionBankController {
      * @return
      */
     @GetMapping("/get/vo")
+    @CrawlerDetect // 爬虫检测
     @HotKey(prefix = true , key = "bank_detail_")
     public BaseResponse<QuestionBankVO> getQuestionBankVOById(QuestionBankQueryRequest questionBankQueryRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(questionBankQueryRequest == null, ErrorCode.PARAMS_ERROR);
@@ -169,6 +171,7 @@ public class QuestionBankController {
      * @return
      */
     @PostMapping("/list/page")
+    @CrawlerDetect // 爬虫检测
     @SaCheckRole(UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<QuestionBank>> listQuestionBankByPage(@RequestBody QuestionBankQueryRequest questionBankQueryRequest) {
         long current = questionBankQueryRequest.getCurrent();
@@ -187,6 +190,7 @@ public class QuestionBankController {
      * @return
      */
     @PostMapping("/list/page/vo")
+    @CrawlerDetect // 爬虫检测
     @SentinelResource(value = "listQuestionBankVOByPage",
             blockHandler = "handleBlockException",
             fallback = "handleFallback")
@@ -229,6 +233,7 @@ public class QuestionBankController {
      * @return
      */
     @PostMapping("/my/list/page/vo")
+    @CrawlerDetect // 爬虫检测
     public BaseResponse<Page<QuestionBankVO>> listMyQuestionBankVOByPage(@RequestBody QuestionBankQueryRequest questionBankQueryRequest,
                                                                          HttpServletRequest request) {
         ThrowUtils.throwIf(questionBankQueryRequest == null, ErrorCode.PARAMS_ERROR);
