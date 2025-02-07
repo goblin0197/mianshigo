@@ -45,6 +45,7 @@ public class CrawlerDetectInterceptor {
     /**
      * 执行拦截
      * 统计的次数为该用户调用需要反爬虫的任何接口总次数
+     * 只对需要登录的接口有效，否则报错
      * @param joinPoint
      * @param crawlerDetect
      * @return

@@ -125,7 +125,6 @@ public class QuestionBankQuestionController {
      * @return
      */
     @GetMapping("/get/vo")
-    @CrawlerDetect // 爬虫检测
     public BaseResponse<QuestionBankQuestionVO> getQuestionBankQuestionVOById(long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         // 查询数据库
@@ -142,7 +141,6 @@ public class QuestionBankQuestionController {
      * @return
      */
     @PostMapping("/list/page")
-    @CrawlerDetect // 爬虫检测
     @SaCheckRole(UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<QuestionBankQuestion>> listQuestionBankQuestionByPage(@RequestBody QuestionBankQuestionQueryRequest questionBankQuestionQueryRequest) {
         long current = questionBankQuestionQueryRequest.getCurrent();
@@ -161,7 +159,6 @@ public class QuestionBankQuestionController {
      * @return
      */
     @PostMapping("/list/page/vo")
-    @CrawlerDetect // 爬虫检测
     public BaseResponse<Page<QuestionBankQuestionVO>> listQuestionBankQuestionVOByPage(@RequestBody QuestionBankQuestionQueryRequest questionBankQuestionQueryRequest,
                                                                                        HttpServletRequest request) {
         long current = questionBankQuestionQueryRequest.getCurrent();
@@ -183,7 +180,6 @@ public class QuestionBankQuestionController {
      * @return
      */
     @PostMapping("/my/list/page/vo")
-    @CrawlerDetect // 爬虫检测
     public BaseResponse<Page<QuestionBankQuestionVO>> listMyQuestionBankQuestionVOByPage(@RequestBody QuestionBankQuestionQueryRequest questionBankQuestionQueryRequest,
                                                                                          HttpServletRequest request) {
         ThrowUtils.throwIf(questionBankQuestionQueryRequest == null, ErrorCode.PARAMS_ERROR);

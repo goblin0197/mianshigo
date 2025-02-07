@@ -170,7 +170,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 //        if (currentUser == null || currentUser.getId() == null) {
 //            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
 //        }
-        Object loginUserId = StpUtil.getLoginIdDefaultNull();
+        Object loginUserId = StpUtil.getLoginId();
         if(loginUserId == null){
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }

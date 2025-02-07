@@ -134,7 +134,6 @@ public class QuestionController {
      * @return
      */
     @GetMapping("/get/vo")
-    @CrawlerDetect // 爬虫检测
     @HotKey(prefix = true ,key = "question_detail_")
     public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
         ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
@@ -169,7 +168,6 @@ public class QuestionController {
      * @return
      */
     @PostMapping("/list/page/vo")
-    @CrawlerDetect // 爬虫检测
     public BaseResponse<Page<QuestionVO>> listQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
                                                                HttpServletRequest request) {
         ThrowUtils.throwIf(questionQueryRequest == null, ErrorCode.PARAMS_ERROR);
@@ -190,7 +188,6 @@ public class QuestionController {
      * @return
      */
     @PostMapping("/my/list/page/vo")
-    @CrawlerDetect // 爬虫检测
     public BaseResponse<Page<QuestionVO>> listMyQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
                                                                  HttpServletRequest request) {
         ThrowUtils.throwIf(questionQueryRequest == null, ErrorCode.PARAMS_ERROR);
@@ -248,7 +245,6 @@ public class QuestionController {
     // endregion
 
     @PostMapping("/search/page/vo")
-    @CrawlerDetect // 爬虫检测
     public BaseResponse<Page<QuestionVO>> searchQuestionVOByPage(@RequestBody QuestionQueryRequest questionQueryRequest,
                                                                  HttpServletRequest request) {
         long size = questionQueryRequest.getPageSize();

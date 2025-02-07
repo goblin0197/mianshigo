@@ -141,7 +141,6 @@ public class QuestionBankController {
      * @return
      */
     @GetMapping("/get/vo")
-    @CrawlerDetect // 爬虫检测
     @HotKey(prefix = true , key = "bank_detail_")
     public BaseResponse<QuestionBankVO> getQuestionBankVOById(QuestionBankQueryRequest questionBankQueryRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(questionBankQueryRequest == null, ErrorCode.PARAMS_ERROR);
@@ -190,7 +189,6 @@ public class QuestionBankController {
      * @return
      */
     @PostMapping("/list/page/vo")
-    @CrawlerDetect // 爬虫检测
     @SentinelResource(value = "listQuestionBankVOByPage",
             blockHandler = "handleBlockException",
             fallback = "handleFallback")
@@ -233,7 +231,6 @@ public class QuestionBankController {
      * @return
      */
     @PostMapping("/my/list/page/vo")
-    @CrawlerDetect // 爬虫检测
     public BaseResponse<Page<QuestionBankVO>> listMyQuestionBankVOByPage(@RequestBody QuestionBankQueryRequest questionBankQueryRequest,
                                                                          HttpServletRequest request) {
         ThrowUtils.throwIf(questionBankQueryRequest == null, ErrorCode.PARAMS_ERROR);
